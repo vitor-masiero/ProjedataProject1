@@ -3,8 +3,13 @@ import model.Pessoa;
 
 import java.math.BigDecimal;
 import java.sql.Array;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Principal {
     private ArrayList<Funcionario> funcionarios = new ArrayList<Funcionario>();
@@ -38,6 +43,25 @@ public class Principal {
         }
     }
 
+    public void somarSalarios() {
+        BigDecimal soma = new BigDecimal(0);
+        for(Funcionario funcionario : funcionarios) {
+            soma = soma.add(funcionario.getSalario());
+        }
+        NumberFormat formatoBR = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+        System.out.println("Total de salários: " + formatoBR.format(soma));
+    }
+
+    public void calcularSalarioMinimo() {
+        for (Funcionario funcionario : funcionarios) {
+            BigDecimal salario = funcionario.getSalario();
+            BigDecimal minimo = new BigDecimal("1212.00");
+            BigDecimal quantidadeSalariosMinimos;
+            quantidadeSalariosMinimos = salario.divide(minimo, 2, BigDecimal.ROUND_HALF_UP);
+            System.out.format("\nO funcionário %s ganha %.2f salários mínimos.", funcionario.getNome(), quantidadeSalariosMinimos);
+        }
+    }
+
     public static void main(String[] args) {
         Principal principal = new Principal();
         principal.inicializarFuncionarios();
@@ -47,7 +71,8 @@ public class Principal {
         principal.aplicarAumento();
         System.out.println("-----------Imprimindo Funcionários Após Aumento------------");
         principal.imprimirFuncionario();
-
+        principal.somarSalarios();
+        principal.calcularSalarioMinimo();
 
     }
 }
