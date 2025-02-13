@@ -5,14 +5,12 @@ import java.math.BigDecimal;
 import java.sql.Array;
 import java.text.NumberFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Principal {
-    private ArrayList<Funcionario> funcionarios = new ArrayList<Funcionario>();
+    private static final List<Funcionario> funcionarios = new ArrayList<Funcionario>();
+
 
     public void inicializarFuncionarios(){
         funcionarios.add(new Funcionario("Maria", LocalDate.of(2000, 10, 18), new BigDecimal("2009.44"), "Operador"));
@@ -62,17 +60,67 @@ public class Principal {
         }
     }
 
+    public static void agruparFuncionario() {
+        Map<String, List<Funcionario>> gruposFuncionario = new HashMap<>();
+        funcionarios.forEach(funcionario -> {
+            gruposFuncionario.computeIfAbsent(funcionario.getFuncao(),
+                    listaFuncionarios -> new ArrayList<>()).add(funcionario);
+        });
+
+        gruposFuncionario.forEach((funcao, lista) -> {
+            System.out.println("Função: " + funcao);
+            lista.forEach(System.out::println);
+        });
+    }
+
+    public static void ordenarAlfabeticamente(int... meses){
+        System.out.println("Aniversariantes nos meses informados:");
+
+        for (Funcionario funcionario : funcionarios) {
+            int mesNascimento = funcionario.getDataNascimento().getMonthValue();
+
+            for (int mes : meses) {
+                if (mesNascimento == mes) {
+                    System.out.println("Funcionário: " + funcionario.getNome());
+                    System.out.println("Alterando");
+                    break;
+                }
+            }
+        }
+    }
+
+
+
     public static void main(String[] args) {
         Principal principal = new Principal();
+        //Inserindo funcionários
         principal.inicializarFuncionarios();
+
+        //Remover Funcionários
         principal.removerFuncionario();
+
+        //Imprimindo os funcionários
         System.out.println("-----------Imprimindo Funcionários------------");
         principal.imprimirFuncionario();
+
+        //Aplicar o aumento
         principal.aplicarAumento();
         System.out.println("-----------Imprimindo Funcionários Após Aumento------------");
         principal.imprimirFuncionario();
+
+        //Agrupando funcionários por função
+        principal.agruparFuncionario();
+
+        //Ordenar alfabeticamente
+        ordenarAlfabeticamente(11, 12);
+
+        //somando salários
         principal.somarSalarios();
+
+        //Calcular quantos salários mínimos cada funcionário ganha.
         principal.calcularSalarioMinimo();
+
+
 
     }
 }
