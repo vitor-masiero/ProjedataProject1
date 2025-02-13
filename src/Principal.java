@@ -5,14 +5,11 @@ import java.math.BigDecimal;
 import java.sql.Array;
 import java.text.NumberFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Principal {
-    private ArrayList<Funcionario> funcionarios = new ArrayList<Funcionario>();
+    private static List<Funcionario> funcionarios = new ArrayList<Funcionario>();
 
     public void inicializarFuncionarios(){
         funcionarios.add(new Funcionario("Maria", LocalDate.of(2000, 10, 18), new BigDecimal("2009.44"), "Operador"));
@@ -62,6 +59,48 @@ public class Principal {
         }
     }
 
+    public static void agruparPorFuncao() {
+        Map<String, List<Funcionario>> grupoFuncao = new HashMap<>();
+        funcionarios.forEach(funcionario ->
+            grupoFuncao.computeIfAbsent(funcionario.getFuncao(), k -> new ArrayList<>()).add(funcionario));
+
+        grupoFuncao.forEach((funcao, lista) -> {
+            System.out.println("Função: " + funcao);
+            lista.forEach(System.out::println);
+        });
+    }
+
+    public static void imprimirAniversariantes(int... meses) {
+        System.out.println("\nAniversariantes dos meses informados: ");
+
+        for (Funcionario funcionario : funcionarios) {
+            int mesNascimento = funcionario.getDataNascimento().getMonthValue();
+
+            for (int mes : meses) {
+                if (mes == mesNascimento) {
+                    System.out.println(funcionario);
+                }
+            }
+        }
+    }
+
+    public static void imprimirFuncinarioMaisVelho() {
+        Funcionario maisVelho = funcionarios.get(0);
+
+        for (Funcionario funcionario : funcionarios) {
+            if (funcionario.getDataNascimento().isBefore(maisVelho.getDataNascimento())) {
+                maisVelho = funcionario;
+            }
+        }
+
+        System.out.println("\nFuncionário mais velho: " + maisVelho);
+    }
+
+    private static void imprimirPorOrdemAlfabetica() {
+        System.out.println("Funcionários em ordem alfabética:");
+        funcionarios.stream().sorted(Comparator.comparing(Funcionario::getNome)).forEach(System.out::println);
+    }
+
     public static void main(String[] args) {
         Principal principal = new Principal();
         principal.inicializarFuncionarios();
@@ -73,6 +112,10 @@ public class Principal {
         principal.imprimirFuncionario();
         principal.somarSalarios();
         principal.calcularSalarioMinimo();
+        principal.agruparPorFuncao();
+        principal.imprimirAniversariantes(11, 12, 10);
+        principal.imprimirFuncinarioMaisVelho();
+        principal.imprimirPorOrdemAlfabetica();
 
     }
 }
